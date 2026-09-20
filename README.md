@@ -6,9 +6,27 @@
 
 ---
 
-## Play It
+## How to Launch and Play
 
-Open `index.html` in any modern browser — no server, no build step, no install.
+You do **not** need to install anything or run a build command.
+
+1. On this GitHub page, select **Code** → **Download ZIP**.
+2. Extract the downloaded ZIP file to any folder on your computer.
+3. Open that folder and double-click `index.html`. It will open in your default web browser.
+4. If asked, allow the browser to play sound. Headphones are recommended for the full experience.
+5. Enter a wish, then follow the on-screen instructions to complete all six trials.
+
+Chrome, Edge, Firefox, and Safari are supported. For the smoothest experience, use the latest version of one of those browsers on a desktop or laptop. The game also supports touch input on mobile devices.
+
+### Optional: run it from a local web server
+
+Opening `index.html` directly is enough. If you already have Python installed, you can instead open a terminal in the project folder, run `python -m http.server 8080`, and visit `http://localhost:8080` in your browser.
+
+### Controls while playing
+
+- **Touch / mouse:** tap buttons and drag objects when a trial asks you to.
+- **Keyboard:** use arrow keys to move or select, and **Space** or **Enter** to confirm.
+- Each trial explains its specific goal before it begins. The gear icon lets you adjust music, sound effects, voiceover, captions, and visual quality.
 
 > **Note:** `js/config.js` is gitignored (it holds a local-only key). The game works fully without it.
 

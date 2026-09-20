@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Trishna — what you actually want</title>
+<meta name="description" content="A Ganesh Chaturthi mini-game: six trials against the inner vices, and a wish that comes back to you at the end.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Mulish:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Shared 3D hero canvas, reused by Intro / Hub / Ending -->
+  <div id="hero3d-container"></div>
+
+  <!-- Shared 2D canvas, reused by every trial -->
+  <canvas id="trial-canvas"></canvas>
+
+  <!-- Themed hue wipe between a trial and the hub -->
+  <div id="screen-wipe"></div>
+
+  <!-- Caption bar for spoken lines that don't already have persistent on-screen text -->
+  <div id="caption-bar" class="hidden"></div>
+
+  <!-- INTRO -->
+  <section class="screen" id="screen-intro" data-screen="intro">
+    <div class="pandal-scene">
+      <div class="sky"></div>
+      <div class="stars"></div>
+      <div class="pandal-silhouette"></div>
+      <div class="devotee"></div>
+      <div class="mushika" id="mushika-cameo" aria-hidden="true"></div>
+      <div class="portal" id="portal"></div>
+    </div>
+    <div class="intro-copy">
+      <h1 class="title-card">Trishna</h1>
+      <p class="subtitle" id="intro-line">A devotee kneels at dusk, holding a wish they haven't said aloud yet.</p>
+      <button class="btn-cta" id="btn-intro-continue">Tap to continue</button>
+    </div>
+    <button class="btn-skip" id="btn-skip-intro">Skip ▸</button>
+  </section>
+
+  <!-- WISH INPUT -->
+  <section class="screen hidden" id="screen-wish" data-screen="wish">
+    <div class="panel wish-panel">
+      <h2>What do you carry with you tonight?</h2>
+      <p class="hint">Ganesha's listening — tell him what you're here for.</p>
+      <textarea id="wish-text" maxlength="140" placeholder="Type your wish..." rows="3"></textarea>
+      <button class="btn-cta" id="btn-wish-begin">Begin</button>
+    </div>
+  </section>
+
+  <!-- HUB -->
+  <section class="screen hidden" id="screen-hub" data-screen="hub">
+    <div class="hub-hero-slot"></div>
+    <h2 class="hub-title">Six trials stand between you and your wish.</h2>
+    <div class="hub-stations" id="hub-stations"></div>
+    <button class="btn-cta hidden" id="btn-hub-ending">Return to Ganesha</button>
+    <button class="btn-gear" id="btn-settings-hub" type="button" aria-label="Settings">⚙</button>
+  </section>
+
+  <!-- TRIAL -->
+  <section class="screen hidden" id="screen-trial" data-screen="trial">
+    <div class="trial-hud">
+      <div class="trial-hud-left">
+        <span id="trial-name"></span>
+      </div>
+      <div class="trial-hud-right">
+        <div class="meter" id="trial-meter"><div class="meter-fill" id="trial-meter-fill"></div></div>
+        <span id="trial-score"></span>
+      </div>
+      <button class="btn-quit" id="btn-trial-quit">✕</button>
+    </div>
+    <div class="trial-overlay" id="trial-start-overlay">
+      <div id="trial-howto-block">
+        <h3 id="trial-overlay-title"></h3>
+        <p id="trial-overlay-howto"></p>
+      </div>
+      <div class="items-form hidden" id="attachment-items-form">
+        <h3>What can't you leave behind?</h3>
+        <p class="items-form-hint">Name 7–8 things you can't imagine giving up. The room will fill with them.</p>
+        <div class="items-form-grid" id="attachment-items-grid"></div>
+      </div>
+      <button class="btn-cta hidden" id="btn-trial-items-next">Next</button>
+      <button class="btn-cta" id="btn-trial-start">Start the trial</button>
+    </div>
+    <div class="trial-overlay hidden" id="trial-end-overlay">
+      <h3 id="trial-end-title"></h3>
+      <p id="trial-end-copy"></p>
+      <button class="btn-cta" id="btn-trial-retry">Try again</button>
+      <button class="btn-secondary" id="btn-trial-hub">Back to hub</button>
+    </div>
+  </section>
+
+  <!-- ENDING -->
+  <section class="screen hidden" id="screen-ending" data-screen="ending">
+    <div class="pandal-scene">
+      <div class="sky"></div>
+      <div class="stars"></div>
+      <div class="pandal-silhouette"></div>
+      <div class="devotee"></div>
+      <div class="mushika" id="mushika-ending" aria-hidden="true"></div>
+      <div class="portal reverse" id="portal-out"></div>
+    </div>
+    <div class="ending-hero-slot"></div>
+    <div class="ending-copy">
+      <p id="ending-blessing"></p>
+      <h1 class="title-card">Trishna</h1>
+      <p class="subtitle">Happy Ganesh Chaturthi.</p>
+      <button class="btn-cta" id="btn-ending-replay">Play again</button>
+    </div>
+    <button class="btn-gear" id="btn-settings-ending" type="button" aria-label="Settings">⚙</button>
+  </section>
+
+  <!-- SETTINGS (shared modal, opened from Hub or Ending) -->
+  <div class="modal hidden" id="settings-panel">
+    <div class="modal-card">
+      <h3>Settings</h3>
+      <label class="settings-row">Music
+        <input type="range" id="setting-music" min="0" max="1" step="0.05">
+      </label>
+      <label class="settings-row">Sound effects
+        <input type="range" id="setting-sfx" min="0" max="1" step="0.05">
+      </label>
+      <label class="settings-row">Voiceover
+        <input type="range" id="setting-voice" min="0" max="1" step="0.05">
+      </label>
+      <label class="settings-row settings-row-check">Captions
+        <input type="checkbox" id="setting-captions">
+      </label>
+      <label class="settings-row settings-row-check">Lower visual quality
+        <input type="checkbox" id="setting-quality">
+      </label>
+      <button class="btn-cta" id="btn-settings-close" type="button">Done</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/config.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
